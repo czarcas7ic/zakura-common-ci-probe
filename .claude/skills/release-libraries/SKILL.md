@@ -78,7 +78,8 @@ workspace dependencies are published at the new version. Publish bottom-up:
 3. `zakura-bellman`, `zakura-reddsa`, `zakura-sinsemilla`,
    `zakura-halo2-poseidon`, then `zakura-halo2-proofs`,
    `zakura-halo2-gadgets`; `zakura-transparent`, `zakura-zip321`
-4. `zakura-redjubjub`, `zakura-sapling-crypto`, `zakura-orchard`
+4. `zakura-reddsa-frost`, `zakura-redjubjub`, `zakura-sapling-crypto`,
+   `zakura-orchard`
 5. `zakura-keys`, `zakura-primitives`, `zakura-proofs`
 
 Verify each publish is visible on crates.io before publishing its dependents.

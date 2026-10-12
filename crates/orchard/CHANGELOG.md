@@ -10,7 +10,7 @@ internal implementation details are not tracked here.
 
 ## [Unreleased]
 
-## [2.3.0] - 2026-10-12
+## [3.0.0] - 2026-10-12
 
 ### Added
 
@@ -22,9 +22,19 @@ internal implementation details are not tracked here.
 
 ### Changed
 
+- Changed note-encryption aliases, byte-wrapper signatures, and Domain,
+  BatchDomain, and ShieldedOutput implementations to use
+  `zakura-note-encryption`. Existing import spelling is preserved, but
+  upstream and fork traits and types are not interchangeable
+  ([#540](https://github.com/zakura-core/common/pull/540)).
 - Generate dummy note addresses without indexed ZIP 32 derivation. Seeded dummy
   generation consumes additional randomness
   ([#551](https://github.com/zakura-core/common/pull/551)).
+- Gate indexed ZIP 32 address generation and diversifier-index recovery behind
+  the default-enabled `zip32-addresses` feature. Consumers disabling default
+  features must opt in to retain these APIs; direct address construction and
+  note decryption remain available without FF1
+  ([#552](https://github.com/zakura-core/common/pull/552)).
 - `circuit::ProvingKey::build` and `circuit::Circuit::from_action_context` are
   now fallible, rejecting every circuit version except
   `OrchardCircuitVersion::PostNu6_3`

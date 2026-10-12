@@ -10,6 +10,16 @@ internal implementation details are not tracked here.
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-10-12
+
+### Added
+
+- Added `zcash_protocol::encoding` with `MAX_COMPACT_SIZE`, `CompactSize`,
+  `Vector`, `Array`, `Optional`, and `ReverseHex`, preserving the
+  `zcash_encoding 0.4.0` API and serialization behavior, including writing
+  values above the reader's maximum
+  ([#540](https://github.com/zakura-core/common/pull/540)).
+
 ## [2.2.0] - 2026-09-30
 
 ### Changed

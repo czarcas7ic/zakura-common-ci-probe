@@ -10,6 +10,14 @@ internal implementation details are not tracked here.
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-10-12
+
+### Added
+
+- Added a separate crate for RedJubjub and RedPallas FROST threshold signatures,
+  including key generation, signing, and rerandomization APIs moved from
+  `reddsa::frost` ([#544](https://github.com/zakura-core/common/pull/544)).
+
 ## Record of Fork
 
 `zakura-reddsa-frost` contains the FROST implementations extracted from

@@ -10,6 +10,18 @@ internal implementation details are not tracked here.
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-10-12
+
+### Changed
+
+- `transaction::builder::cached_orchard_proving_key` now returns a `Result`,
+  rejecting historical circuit versions
+  ([#553](https://github.com/zakura-core/common/pull/553)).
+- The transaction builder no longer supports Orchard spends or outputs for
+  target heights before NU6.3 activation, and coinbase transactions no longer
+  include an Orchard-pool bundle
+  ([#553](https://github.com/zakura-core/common/pull/553)).
+
 ## [2.1.0] - 2026-09-29
 
 ### Changed

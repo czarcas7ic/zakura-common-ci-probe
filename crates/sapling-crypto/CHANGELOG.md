@@ -10,6 +10,22 @@ internal implementation details are not tracked here.
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-10-12
+
+### Added
+
+- Added the opt-in `pinned-vk-only` feature and
+  `circuit::pinned_verifying_keys()` accessor for the canonical Sapling keys,
+  without bundled proving parameters. Added checked, size-bounded
+  `SpendVerifyingKey::read` and `OutputVerifyingKey::read` constructors
+  ([#556](https://github.com/zakura-core/common/pull/556)).
+
+### Changed
+
+- Generate dummy spent note addresses without indexed ZIP 32 derivation. Seeded
+  dummy generation consumes additional randomness
+  ([#551](https://github.com/zakura-core/common/pull/551)).
+
 ## [2.1.0] - 2026-09-29
 
 ### Added

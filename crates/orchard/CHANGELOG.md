@@ -10,6 +10,44 @@ internal implementation details are not tracked here.
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-10-12
+
+### Added
+
+- Added `circuit::VerifyingKey::capture_verifier_fingerprint` behind the
+  `verifier-fingerprint` feature, assembling the verifier equation for a proof
+  as an MSM without deciding validity so it can be compared against an
+  independent verifier's equation
+  ([#559](https://github.com/zakura-core/common/pull/559)).
+
+### Changed
+
+- Generate dummy note addresses without indexed ZIP 32 derivation. Seeded dummy
+  generation consumes additional randomness
+  ([#551](https://github.com/zakura-core/common/pull/551)).
+- `circuit::ProvingKey::build` and `circuit::Circuit::from_action_context` are
+  now fallible, rejecting every circuit version except
+  `OrchardCircuitVersion::PostNu6_3`
+  ([#553](https://github.com/zakura-core/common/pull/553)).
+- Bundle construction and PCZT proving reject historical bundle versions with
+  the new `builder::BuildError::UnsupportedProtocolVersion` and
+  `pczt::ProverError::UnsupportedProtocolVersion` errors
+  ([#553](https://github.com/zakura-core/common/pull/553)).
+
+### Removed
+
+- Removed support for creating proofs under the historical (pre-NU6.3) circuit
+  versions, including through raw Halo2 witness synthesis. Verification of
+  historical proofs and reconstruction of their verifying keys are unchanged
+  ([#553](https://github.com/zakura-core/common/pull/553)).
+
+### Fixed
+
+- Fixed the `unstable-frost` feature failing to compile unless
+  `unstable-voting-circuits` was also enabled; it now activates its
+  `visibility` dependency itself
+  ([#546](https://github.com/zakura-core/common/pull/546)).
+
 ## [2.1.0] - 2026-09-29
 
 ### Added

@@ -58,3 +58,10 @@ and is a payment-protocol crate, so some librustzcash conventions about database
   convention above), so other crates in the ecosystem reuse them instead of
   re-deriving fixtures. A `#[test]` that hand-builds the values it exercises is a
   smell: extract the value-building into an `arb_*` and drive the test with it.
+- **Pick features per check, not globally.** Orchard's unit tests need `std`.
+  The default features include it, so `cargo test -p zakura-orchard` works as
+  is; with `--no-default-features`, add `--features std` (as CI does for the
+  serial-prover captures). The `no_std` builds of `zakura-note-encryption` are a
+  separate check (`cargo check -p zakura-note-encryption --no-default-features`,
+  plus `--features alloc` and `--features pre-zip-212`); keep running both, and
+  never turn on default features workspace-wide to make a test build.

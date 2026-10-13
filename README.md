@@ -67,15 +67,15 @@ includes it for the dedicated FROST crate.
 Rust 1.97.1, so `cargo` in a checkout (builds, Clippy, rustfmt, and the
 benchmarks in [`crates/orchard/benches`](crates/orchard/benches/README.md))
 uses the same compiler for everyone. The crates themselves keep a minimum
-supported Rust version of 1.91 (`rust-version` in [`Cargo.toml`](Cargo.toml)),
+supported Rust version of 1.97 (`rust-version` in [`Cargo.toml`](Cargo.toml)),
 which CI builds separately; raising the MSRV is a consumer-visible change,
 while bumping the development pin is not. The workspace uses Cargo's
 MSRV-aware resolver, so `cargo update` prefers dependency releases that the
-1.91 toolchain can build. To reproduce the MSRV check locally:
+1.97 toolchain can build. To reproduce the MSRV check locally:
 
 ```console
-rustup toolchain install 1.91.0 --profile minimal
-cargo +1.91.0 check --locked --workspace
+rustup toolchain install 1.97.0 --profile minimal
+cargo +1.97.0 check --locked --workspace
 ```
 
 ## Semantic Versioning

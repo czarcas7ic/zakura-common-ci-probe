@@ -10,6 +10,21 @@ internal implementation details are not tracked here.
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-10-13
+
+### Changed
+
+- Raised the minimum supported Rust version from 1.91 to 1.97
+  ([#567](https://github.com/zakura-core/common/pull/567)).
+
+### Removed
+
+- Removed the `frost` feature and `reddsa::frost` module, along with the
+  `frost-rerandomized` and `rand_core_06` features that only enabled its
+  dependencies. FROST users must depend on `zakura-reddsa-frost` and import
+  `reddsa_frost::{redjubjub, redpallas}` instead
+  ([#544](https://github.com/zakura-core/common/pull/544)).
+
 ## [2.1.0] - 2026-09-29
 
 ### Changed

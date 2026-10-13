@@ -10,6 +10,27 @@ internal implementation details are not tracked here.
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-10-13
+
+### Changed
+
+- Changed the note-encryption dependency family exposed through Sapling and
+  Orchard transaction/builder types to `zakura-note-encryption`, retaining
+  allocation and pre-ZIP-212 support
+  ([#540](https://github.com/zakura-core/common/pull/540)).
+- Updated transparent dependency types to `secp256k1` 0.33 and `zcash_script`
+  0.6, removing obsolete prerelease `block-buffer` and `crypto-common` pins
+  ([#545](https://github.com/zakura-core/common/pull/545)).
+- `transaction::builder::cached_orchard_proving_key` now returns a `Result`,
+  rejecting historical circuit versions
+  ([#553](https://github.com/zakura-core/common/pull/553)).
+- The transaction builder no longer supports Orchard spends or outputs for
+  target heights before NU6.3 activation, and coinbase transactions no longer
+  include an Orchard-pool bundle
+  ([#553](https://github.com/zakura-core/common/pull/553)).
+- Raised the minimum supported Rust version from 1.91 to 1.97
+  ([#567](https://github.com/zakura-core/common/pull/567)).
+
 ## [2.1.0] - 2026-09-29
 
 ### Changed

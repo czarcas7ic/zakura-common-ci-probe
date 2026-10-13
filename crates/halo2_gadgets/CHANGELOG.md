@@ -10,6 +10,20 @@ internal implementation details are not tracked here.
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-10-13
+
+### Changed
+
+- Raised the minimum supported Rust version from 1.91 to 1.97
+  ([#567](https://github.com/zakura-core/common/pull/567)).
+
+### Removed
+
+- Removed the `unstable-sha256-gadget` feature and the entire
+  `halo2_gadgets::sha256` API, including the SHA-256 gadget and Table16 chip.
+  The `nightly` feature no longer enables SHA-256 support
+  ([#548](https://github.com/zakura-core/common/pull/548)).
+
 ## [2.0.0] - 2026-09-23
 
 ### Changed

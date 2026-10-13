@@ -10,6 +10,22 @@ internal implementation details are not tracked here.
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-10-13
+
+### Changed
+
+- Updated transparent key dependency types to stable `bip32` 0.6 and
+  `secp256k1` 0.33. Removed `Key::pubkey_with_context` and
+  `Key::der_encode_with_context`; use `Key::pubkey` and `Key::der_encode`
+  ([#545](https://github.com/zakura-core/common/pull/545)).
+- Add the default-enabled `zip32-addresses` feature for Unified Address
+  generation, diversifier-index recovery, gap-address generation, and address
+  test generators. Consumers disabling default features must opt in to retain
+  these APIs
+  ([#552](https://github.com/zakura-core/common/pull/552)).
+- Raised the minimum supported Rust version from 1.91 to 1.97
+  ([#567](https://github.com/zakura-core/common/pull/567)).
+
 ## [2.0.0] - 2026-09-23
 
 ### Changed

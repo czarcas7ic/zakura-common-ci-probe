@@ -10,6 +10,25 @@ internal implementation details are not tracked here.
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-10-13
+
+### Added
+
+- Added the complete `zcash_note_encryption 0.4.2` implementation as the
+  `zakura-note-encryption` package, retaining the `zcash_note_encryption`
+  library target, note-encryption and recovery APIs, features, and no-std
+  support. The package inherits Common's edition 2024 and MSRV 1.91
+  ([#540](https://github.com/zakura-core/common/pull/540)).
+
+### Changed
+
+- Updated the ChaCha20/Poly1305 backend to share ChaCha20 0.10 with Rand,
+  preserving key and cached keystream zeroization, ciphertext formats, and
+  public interfaces
+  ([#545](https://github.com/zakura-core/common/pull/545)).
+- Raised the minimum supported Rust version from 1.91 to 1.97
+  ([#567](https://github.com/zakura-core/common/pull/567)).
+
 ## Record of Fork
 
 Forked from [`zcash_note_encryption 0.4.2`](https://crates.io/crates/zcash_note_encryption/0.4.2),

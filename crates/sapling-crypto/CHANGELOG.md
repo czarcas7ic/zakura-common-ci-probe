@@ -10,6 +10,34 @@ internal implementation details are not tracked here.
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-10-13
+
+### Added
+
+- Added the opt-in `pinned-vk-only` feature and
+  `circuit::pinned_verifying_keys()` accessor for the canonical Sapling keys,
+  without bundled proving parameters. Added checked, size-bounded
+  `SpendVerifyingKey::read` and `OutputVerifyingKey::read` constructors
+  ([#556](https://github.com/zakura-core/common/pull/556)).
+
+### Changed
+
+- Changed public note-encryption, compact-output, output-description, and
+  recovery signatures and trait implementations to the
+  `zakura-note-encryption` type family. Upstream byte wrappers and traits
+  cannot be mixed with the fork
+  ([#540](https://github.com/zakura-core/common/pull/540)).
+- Generate dummy spent note addresses without indexed ZIP 32 derivation. Seeded
+  dummy generation consumes additional randomness
+  ([#551](https://github.com/zakura-core/common/pull/551)).
+- Gate indexed ZIP 32 address generation and diversifier-index recovery behind
+  the default-enabled `zip32-addresses` feature. Consumers disabling default
+  features must opt in to retain these APIs; key derivation, direct address
+  construction, and note decryption remain available without FF1
+  ([#552](https://github.com/zakura-core/common/pull/552)).
+- Raised the minimum supported Rust version from 1.91 to 1.97
+  ([#567](https://github.com/zakura-core/common/pull/567)).
+
 ## [2.1.0] - 2026-09-29
 
 ### Added

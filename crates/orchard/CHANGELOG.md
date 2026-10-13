@@ -10,6 +10,58 @@ internal implementation details are not tracked here.
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-10-13
+
+### Added
+
+- Added `circuit::VerifyingKey::capture_verifier_fingerprint` behind the
+  `verifier-fingerprint` feature, assembling the verifier equation for a proof
+  as an MSM without deciding validity so it can be compared against an
+  independent verifier's equation
+  ([#559](https://github.com/zakura-core/common/pull/559)).
+
+### Changed
+
+- Changed note-encryption aliases, byte-wrapper signatures, and Domain,
+  BatchDomain, and ShieldedOutput implementations to use
+  `zakura-note-encryption`. Existing import spelling is preserved, but
+  upstream and fork traits and types are not interchangeable
+  ([#540](https://github.com/zakura-core/common/pull/540)).
+- Generate dummy note addresses without indexed ZIP 32 derivation. Seeded dummy
+  generation consumes additional randomness
+  ([#551](https://github.com/zakura-core/common/pull/551)).
+- Gate indexed ZIP 32 address generation and diversifier-index recovery behind
+  the default-enabled `zip32-addresses` feature. Consumers disabling default
+  features must opt in to retain these APIs; direct address construction and
+  note decryption remain available without FF1
+  ([#552](https://github.com/zakura-core/common/pull/552)).
+- `circuit::ProvingKey::build` and `circuit::Circuit::from_action_context` are
+  now fallible, rejecting every circuit version except
+  `OrchardCircuitVersion::PostNu6_3`
+  ([#553](https://github.com/zakura-core/common/pull/553)).
+- Bundle construction and PCZT proving reject historical bundle versions with
+  the new `builder::BuildError::UnsupportedProtocolVersion` and
+  `pczt::ProverError::UnsupportedProtocolVersion` errors
+  ([#553](https://github.com/zakura-core/common/pull/553)).
+- Raised the minimum supported Rust version from 1.91 to 1.97
+  ([#567](https://github.com/zakura-core/common/pull/567)).
+
+### Removed
+
+- Removed support for creating proofs under the historical (pre-NU6.3) circuit
+  versions, including through raw Halo2 witness synthesis. Verification of
+  historical proofs and reconstruction of their verifying keys are unchanged
+  ([#553](https://github.com/zakura-core/common/pull/553)).
+
+### Fixed
+
+- Fixed the `unstable-frost` feature failing to compile unless
+  `unstable-voting-circuits` was also enabled; it now activates its
+  `visibility` dependency itself
+  ([#546](https://github.com/zakura-core/common/pull/546)).
+- Fixed generated test bundles so their value balances fit the builder's
+  signed range ([#567](https://github.com/zakura-core/common/pull/567)).
+
 ## [2.1.0] - 2026-09-29
 
 ### Added

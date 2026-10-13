@@ -4,7 +4,7 @@ Configure crates.io Trusted Publishing for every publishable workspace crate
 in zakura-core/common.
 
 Reference implementation:
-https://github.com/zakura-core/common/pull/568
+[PR #568](https://github.com/zakura-core/common/pull/568)
 
 Use a clean, isolated checkout of current origin/main. Preserve existing local
 edits and read the repository's instructions before acting.

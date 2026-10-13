@@ -1,7 +1,7 @@
 # Agent prompt: configure the GitHub release environment
 
 Configure the GitHub Environment "crates-io" in zakura-core/common for the
-release workflow in https://github.com/zakura-core/common/pull/568.
+release workflow in [PR #568](https://github.com/zakura-core/common/pull/568).
 
 Use an existing authorized GitHub account with repository admin rights.
 Inspect the environment and deployment branch policies before changing

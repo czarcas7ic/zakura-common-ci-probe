@@ -1909,7 +1909,7 @@ pub mod testing {
         },
         note::{Nullifier, Rho},
         tree::{Anchor, MerkleHashOrchard, MerklePath},
-        value::{MAX_NOTE_VALUE, NoteValue, testing::arb_positive_note_value},
+        value::{NoteValue, testing::arb_positive_note_value},
     };
 
     use super::{Builder, BundleType};
@@ -2058,10 +2058,22 @@ pub mod testing {
     #[cfg(test)]
     const SMALL_GENERATED_NOTE_LIMIT: usize = 3;
 
+    /// Keep each generated total within the signed balance accepted by the builder.
+    /// Individual notes can hold u64 values, but a bundle balance must fit in i64.
+    const GENERATED_BUNDLE_VALUE_LIMIT: u64 = i64::MAX as u64;
+
+    prop_compose! {
+        fn arb_bundle_amounts(note_limit: usize)(
+            values in vec(arb_positive_note_value(GENERATED_BUNDLE_VALUE_LIMIT / note_limit as u64), 1..note_limit),
+            changes in vec(arb_positive_note_value(GENERATED_BUNDLE_VALUE_LIMIT / note_limit as u64), 1..note_limit),
+        ) -> (Vec<NoteValue>, Vec<NoteValue>) {
+            (values, changes)
+        }
+    }
+
     prop_compose! {
         fn arb_bundle_inputs(sk: SpendingKey, note_limit: usize)(
-            values in vec(arb_positive_note_value(MAX_NOTE_VALUE / note_limit as u64), 1..note_limit),
-            changes in vec(arb_positive_note_value(MAX_NOTE_VALUE / note_limit as u64), 1..note_limit),
+            (values, changes) in arb_bundle_amounts(note_limit),
             seed in any::<[u8; 32]>(),
         ) -> ArbitraryBundleInputs<StdRng> {
             let recipient = FullViewingKey::from(&sk).address(crate::keys::Diversifier::from_bytes(Default::default()), Scope::Internal);
@@ -2070,6 +2082,19 @@ pub mod testing {
                 rng: StdRng::from_seed(seed), sk, anchor, notes,
                 output_amounts: changes.into_iter().map(|value| (recipient, value)).collect(),
             }
+        }
+    }
+
+    proptest! {
+        #[test]
+        fn generated_bundle_balances_fit_signed_range(
+            (values, changes) in (2..=GENERATED_NOTE_LIMIT).prop_flat_map(arb_bundle_amounts),
+        ) {
+            let spends: i128 = values.iter().map(|value| i128::from(value.inner())).sum();
+            let outputs: i128 = changes.iter().map(|value| i128::from(value.inner())).sum();
+            prop_assert!(i64::try_from(spends).is_ok(), "generated spend total exceeds the signed balance range");
+            prop_assert!(i64::try_from(outputs).is_ok(), "generated output total exceeds the signed balance range");
+            prop_assert!(i64::try_from(spends - outputs).is_ok(), "generated net balance exceeds the signed balance range");
         }
     }
 

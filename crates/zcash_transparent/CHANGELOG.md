@@ -10,7 +10,7 @@ internal implementation details are not tracked here.
 
 ## [Unreleased]
 
-## [3.0.0] - 2026-10-12
+## [3.0.0] - 2026-10-13
 
 ### Changed
 
@@ -19,6 +19,8 @@ internal implementation details are not tracked here.
   longer has lifetime/type parameters; `prepare_transparent_signatures` and
   PCZT input signing/signature methods no longer accept a secp256k1 context
   ([#545](https://github.com/zakura-core/common/pull/545)).
+- Raised the minimum supported Rust version from 1.91 to 1.97
+  ([#567](https://github.com/zakura-core/common/pull/567)).
 
 ## [2.0.0] - 2026-09-23
 

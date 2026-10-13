@@ -10,7 +10,7 @@ internal implementation details are not tracked here.
 
 ## [Unreleased]
 
-## [3.0.0] - 2026-10-12
+## [3.0.0] - 2026-10-13
 
 ### Changed
 
@@ -28,6 +28,8 @@ internal implementation details are not tracked here.
   target heights before NU6.3 activation, and coinbase transactions no longer
   include an Orchard-pool bundle
   ([#553](https://github.com/zakura-core/common/pull/553)).
+- Raised the minimum supported Rust version from 1.91 to 1.97
+  ([#567](https://github.com/zakura-core/common/pull/567)).
 
 ## [2.1.0] - 2026-09-29
 

@@ -10,13 +10,18 @@ internal implementation details are not tracked here.
 
 ## [Unreleased]
 
-## [3.0.0] - 2026-10-12
+## [3.0.0] - 2026-10-13
 
 ### Added
 
 - Added a separate crate for RedJubjub and RedPallas FROST threshold signatures,
   including key generation, signing, and rerandomization APIs moved from
   `reddsa::frost` ([#544](https://github.com/zakura-core/common/pull/544)).
+
+### Changed
+
+- Raised the minimum supported Rust version from 1.91 to 1.97
+  ([#567](https://github.com/zakura-core/common/pull/567)).
 
 ## Record of Fork
 

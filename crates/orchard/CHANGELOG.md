@@ -10,7 +10,7 @@ internal implementation details are not tracked here.
 
 ## [Unreleased]
 
-## [3.0.0] - 2026-10-12
+## [3.0.0] - 2026-10-13
 
 ### Added
 
@@ -43,6 +43,8 @@ internal implementation details are not tracked here.
   the new `builder::BuildError::UnsupportedProtocolVersion` and
   `pczt::ProverError::UnsupportedProtocolVersion` errors
   ([#553](https://github.com/zakura-core/common/pull/553)).
+- Raised the minimum supported Rust version from 1.91 to 1.97
+  ([#567](https://github.com/zakura-core/common/pull/567)).
 
 ### Removed
 
@@ -57,6 +59,8 @@ internal implementation details are not tracked here.
   `unstable-voting-circuits` was also enabled; it now activates its
   `visibility` dependency itself
   ([#546](https://github.com/zakura-core/common/pull/546)).
+- Fixed generated test bundles so their value balances fit the builder's
+  signed range ([#567](https://github.com/zakura-core/common/pull/567)).
 
 ## [2.1.0] - 2026-09-29
 

@@ -7,7 +7,7 @@ between two already-built revisions, not for microbenchmarking isolated
 arithmetic.
 
 The commands below pin Rust 1.97.1 for comparable performance measurements.
-This does not change the workspace's minimum supported Rust version of 1.91,
+This does not change the workspace's minimum supported Rust version of 1.97,
 which is tested separately.
 
 ## Merkle hashing

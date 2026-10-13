@@ -44,7 +44,7 @@
 
 [workspace]
 # Resolver 3 is resolver 2 plus MSRV-aware version selection: `cargo update`
-# and `cargo add` prefer dependency releases whose rust-version fits the 1.91
+# and `cargo add` prefer dependency releases whose rust-version fits the 1.97
 # MSRV below, so a checkout on the newer development toolchain pinned in
 # rust-toolchain.toml cannot silently lock a dependency that the MSRV lanes in
 # CI can no longer build. Feature unification is unchanged.
@@ -90,9 +90,9 @@ edition = "2024"
 # The minimum supported Rust version every published crate promises. It is
 # independent of the newer development toolchain pinned in rust-toolchain.toml.
 # Raising it is a consumer-visible change (changelog entry required) and must
-# move the `cargo +1.91.0` lanes in .github/workflows/ci.yml and
+# move the `cargo +1.97.0` lanes in .github/workflows/ci.yml and
 # .github/scripts/check_rust_group.sh with it.
-rust-version = "1.91"
+rust-version = "1.97"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/zakura-core/common"
 # One shared README for every published crate; cargo package copies it into

@@ -5,14 +5,14 @@
 #
 # This is deliberately newer than the minimum supported Rust version the
 # published crates promise, which is [workspace.package] rust-version in
-# Cargo.toml (1.91). Raising the MSRV is a consumer-visible change that needs
+# Cargo.toml (1.97). Raising the MSRV is a consumer-visible change that needs
 # a changelog entry; bumping this pin is not. CI keeps both honest: its
-# `cargo +1.91.0` lanes build against the MSRV and its `cargo +stable` lanes
+# `cargo +1.97.0` lanes build against the MSRV and its `cargo +stable` lanes
 # track the latest stable release, independently of this file. To run the
 # MSRV check locally:
 #
-#     rustup toolchain install 1.91.0 --profile minimal
-#     cargo +1.91.0 check --locked --workspace
+#     rustup toolchain install 1.97.0 --profile minimal
+#     cargo +1.97.0 check --locked --workspace
 [toolchain]
 channel = "1.97.1"
 components = ["clippy", "rustfmt"]

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Verify manifest versions together, then upload only with a matching receipt."""
+"""Verify unpublished versions against registry dependencies, then upload with a matching receipt."""
 
 import argparse
 import graphlib
@@ -97,6 +97,15 @@ def registry_record(name, version):
     return record
 
 
+def checked_registry_status(package, expected=None):
+    """Read availability, rejecting a change from the dependency source we verified."""
+    record = registry_record(package["name"], package["version"])
+    status = "available" if record is not None else "absent"
+    if expected is not None and status != expected:
+        raise ReleaseError(f"Registry availability changed after verification for {package['name']} {package['version']}; rerun verification before publishing.")
+    return status
+
+
 def index_available(name, version):
     lower = name.lower()
     if len(lower) == 1:
@@ -184,12 +193,13 @@ def run_release(root, mode, output, verified=None, run_id=None):
     if mode in ("validate", "publish"):
         if verified is None:
             raise ReleaseError("A successful verification receipt is required.")
-        read_verified(verified, root, head, packages)
+        verification = read_verified(verified, root, head, packages)
         if mode == "validate":
             print("Verified receipt matches the clean checkout.")
             return
         if not run_id:
             raise ReleaseError("Publication requires the GitHub run ID for attribution.")
+        verified_statuses = {p["name"]: p["registry_status"] for p in verification["packages"]}
     receipt = {"schema_version": 1, "repository": REPOSITORY, "commit": head,
                "tree": git(root, "rev-parse", "HEAD^{tree}"),
                "verification_passed": mode == "publish", "run_id": run_id,
@@ -199,19 +209,23 @@ def run_release(root, mode, output, verified=None, run_id=None):
     try:
         # Check all versions for yanks/errors before any irreversible upload.
         for current in receipt["packages"]:
-            version = registry_record(current["name"], current["version"])
-            current["registry_status"] = "available" if version is not None else "absent"
+            expected = verified_statuses[current["name"]] if mode == "publish" else None
+            current["registry_status"] = checked_registry_status(current, expected)
             save_receipt(output, receipt)
         with tempfile.TemporaryDirectory(prefix="common-crate-release-") as target:
             if mode == "verify":
                 current = None
                 command = ["cargo", "publish", "--registry", "crates-io", "--locked",
                            "--dry-run", "--keep-going", "--target-dir", target]
-                for package in packages:
+                unpublished = [p for p in receipt["packages"] if p["registry_status"] == "absent"]
+                for package in unpublished:
                     command.extend(["--package", package["name"]])
                 check_checkout(root, head)
-                # Include existing versions: verify the whole selected checkout together.
-                subprocess.run(command, cwd=root, check=True)
+                # Overlay only versions we will upload. Already published dependencies
+                # must resolve from crates.io, rather than potentially changed local code.
+                # Without a selection Cargo would verify the workspace default members.
+                if unpublished:
+                    subprocess.run(command, cwd=root, check=True)
                 check_checkout(root, head)
                 receipt["verification_passed"] = True
                 for current in receipt["packages"]:
@@ -221,8 +235,9 @@ def run_release(root, mode, output, verified=None, run_id=None):
             for current in receipt["packages"]:
                 check_checkout(root, head)
                 name, version = current["name"], current["version"]
-                # Re-read at upload time so interrupted releases can resume safely.
-                if registry_record(name, version) is not None:
+                # A version appearing since verification changes Cargo's dependency
+                # source. Reruns verify again before skipping previous uploads.
+                if checked_registry_status(current, current["registry_status"]) == "available":
                     current["registry_status"] = "available"
                     current["result"] = "previously_available"
                     save_receipt(output, receipt)

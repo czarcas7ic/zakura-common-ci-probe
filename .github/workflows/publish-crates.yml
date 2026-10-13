@@ -48,7 +48,7 @@ jobs:
         run: |
           python3 -c 'import tomllib'
           rustup show
-      - name: Fully verify all release packages without credentials
+      - name: Verify unpublished packages against registry dependencies without credentials
         run: python3 .github/scripts/publish_crates.py verify --output "$RUNNER_TEMP/verification.json"
       - name: Summarize verification
         if: ${{ always() }}

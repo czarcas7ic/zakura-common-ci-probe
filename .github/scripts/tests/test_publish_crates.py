@@ -149,7 +149,7 @@ class ReleaseTests(unittest.TestCase):
     def run_publish(self):
         release.run_release(Path('/source'), 'publish', self.output, '/verified.json', '10')
 
-    def test_verify_uses_one_locked_full_dry_run(self):
+    def test_verify_unpublished_packages_together(self):
         with patch.object(release, 'registry_record', return_value=None), patch.object(release.subprocess, 'run') as run:
             release.run_release(Path('/source'), 'verify', self.output)
         command = run.call_args.args[0]
@@ -157,6 +157,28 @@ class ReleaseTests(unittest.TestCase):
         self.assertIn('--locked', command)
         self.assertEqual(command.count('--package'), 2)
         self.assertTrue(json.loads(self.output.read_text())['verification_passed'])
+
+    def test_verify_does_not_overlay_already_published_dependencies(self):
+        with patch.object(release, 'registry_record', side_effect=[{}, None]), patch.object(release.subprocess, 'run') as run:
+            release.run_release(Path('/source'), 'verify', self.output)
+        command = run.call_args.args[0]
+        selected = [command[i + 1] for i, arg in enumerate(command) if arg == '--package']
+        self.assertEqual(selected, ['consumer'])
+        progress = json.loads(self.output.read_text())
+        self.assertEqual([p['registry_status'] for p in progress['packages']], ['available', 'absent'])
+        self.assertTrue(progress['verification_passed'])
+
+    def test_verify_all_published_does_not_select_cargo_default_packages(self):
+        with patch.object(release, 'registry_record', return_value={}), patch.object(release.subprocess, 'run') as run:
+            release.run_release(Path('/source'), 'verify', self.output)
+        run.assert_not_called()
+        self.assertTrue(json.loads(self.output.read_text())['verification_passed'])
+
+    def test_failed_package_verification_cannot_issue_successful_receipt(self):
+        with patch.object(release, 'registry_record', side_effect=[{}, None]), patch.object(release.subprocess, 'run', side_effect=subprocess.CalledProcessError(101, 'cargo')):
+            with self.assertRaises(subprocess.CalledProcessError):
+                release.run_release(Path('/source'), 'verify', self.output)
+        self.assertFalse(json.loads(self.output.read_text())['verification_passed'])
 
     def test_partial_publish_retains_progress_and_stops(self):
         with patch.object(release, 'registry_record', return_value=None), patch.object(release, 'wait_available') as wait, patch.object(release.subprocess, 'run', side_effect=[None, subprocess.CalledProcessError(101, 'cargo')]) as run:
@@ -173,12 +195,35 @@ class ReleaseTests(unittest.TestCase):
             self.assertNotIn('--dry-run', call.args[0])
 
     def test_resume_skips_available_version(self):
-        with patch.object(release, 'registry_record', side_effect=[{}, None, {}, None]), patch.object(release, 'wait_available') as wait, patch.object(release.subprocess, 'run') as run:
+        verified = receipt()
+        verified['packages'][0]['registry_status'] = 'available'
+        with patch.object(release, 'read_verified', return_value=verified), patch.object(release, 'registry_record', side_effect=[{}, None, {}, None]), patch.object(release, 'wait_available') as wait, patch.object(release.subprocess, 'run') as run:
             self.run_publish()
         run.assert_called_once()
         self.assertIn('/source/consumer/Cargo.toml', run.call_args.args[0])
         self.assertEqual(wait.call_count, 2)
         self.assertEqual([p['result'] for p in json.loads(self.output.read_text())['packages']], ['previously_available', 'published'])
+
+    def test_registry_changes_after_verification_stop_before_any_upload(self):
+        for statuses in ([{}, None], [None, {}]):
+            with self.subTest(statuses=statuses), patch.object(release, 'registry_record', side_effect=statuses + [None, None]), patch.object(release, 'wait_available'), patch.object(release.subprocess, 'run') as run:
+                with self.assertRaisesRegex(release.ReleaseError, 'changed after verification'):
+                    self.run_publish()
+                run.assert_not_called()
+
+    def test_version_appearing_at_upload_time_requires_verification_again(self):
+        with patch.object(release, 'registry_record', side_effect=[None, None, {}, None]), patch.object(release, 'wait_available'), patch.object(release.subprocess, 'run') as run:
+            with self.assertRaisesRegex(release.ReleaseError, 'changed after verification'):
+                self.run_publish()
+        run.assert_not_called()
+
+    def test_previously_available_version_disappearing_stops_publication(self):
+        verified = receipt()
+        verified['packages'][0]['registry_status'] = 'available'
+        with patch.object(release, 'read_verified', return_value=verified), patch.object(release, 'registry_record', side_effect=[{}, None, None, None]), patch.object(release, 'wait_available'), patch.object(release.subprocess, 'run') as run:
+            with self.assertRaisesRegex(release.ReleaseError, 'changed after verification'):
+                self.run_publish()
+        run.assert_not_called()
 
     def test_registry_failure_stops_before_upload(self):
         with patch.object(release, 'registry_record', side_effect=release.ReleaseError('HTTP 500 full detail')), patch.object(release.subprocess, 'run') as run:

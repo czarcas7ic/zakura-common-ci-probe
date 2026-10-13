@@ -109,13 +109,15 @@ After the workflow merges and the exact main commit's `CI` workflow and
 gh workflow run publish-crates.yml --repo zakura-core/common --ref main -f mode=verify
 ```
 
-Verification checks all selected registry versions, rejects yanks and registry
-errors, and runs one locked Cargo dry-run containing every selected package,
-including versions already available. Cargo verifies the packages together so
-unpublished workspace versions can resolve one another. This is a packaging and
-compile check with Cargo's default package features; broader feature tests remain
-in CI. The receipt records the commit, Git tree, ordered names, versions,
-manifests, dependencies, registry status, and whether verification succeeded.
+Verification checks all selected registry versions and rejects yanks and registry
+errors. It runs one locked Cargo dry-run containing only unpublished versions, so
+new workspace versions can resolve one another while dependencies on versions
+already available resolve from crates.io. Local copies of published versions
+cannot substitute for the immutable code users will download. If every version
+is already published, no packaging or compilation is needed. The compile check
+uses Cargo's default package features; broader feature tests remain in CI. The
+receipt records the commit, Git tree, ordered names, versions, manifests,
+dependencies, registry status, and whether verification succeeded.
 
 Only then does the OIDC smoke job request environment approval. Sean must approve
 it. That job exchanges a short-lived token and revokes it in the authentication
@@ -131,6 +133,11 @@ and environment approval. Before token exchange, a fresh checkout validates the
 receipt against the same clean commit and ordered versions. The upload step
 validates again, uses locked dependencies and `--no-verify`, and skips already
 available versions. Only this step receives the temporary registry token.
+If a version's registry availability changes after verification, publication
+stops and requires verification again; it cannot silently switch a dependency
+from verified local code to newly available registry code. This check runs for
+every selected version before any upload and again immediately before each
+version is uploaded or skipped.
 Toolchain installation, compilation, and environment waiting happen beforehand.
 The authentication action revokes the token when the job finishes.
 

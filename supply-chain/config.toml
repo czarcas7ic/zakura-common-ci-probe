@@ -122,8 +122,9 @@ version = "0.6.1"
 criteria = "safe-to-deploy"
 
 [[exemptions.aes]]
-version = "0.8.4"
+version = "0.9.3"
 criteria = "safe-to-deploy"
+notes = "AES/FF1 backend migration; pending dependency review."
 
 [[exemptions.ahash]]
 version = "0.8.12"
@@ -235,8 +236,9 @@ version = "0.3.0"
 criteria = "safe-to-deploy"
 
 [[exemptions.cbc]]
-version = "0.1.2"
+version = "0.2.1"
 criteria = "safe-to-deploy"
+notes = "AES/FF1 backend migration; pending dependency review."
 
 [[exemptions.cc]]
 version = "1.4.2"
@@ -298,6 +300,11 @@ criteria = "safe-to-deploy"
 [[exemptions.cpp_demangle]]
 version = "0.4.5"
 criteria = "safe-to-run"
+
+[[exemptions.cpubits]]
+version = "0.1.1"
+criteria = "safe-to-deploy"
+notes = "AES/FF1 backend migration; pending dependency review."
 
 [[exemptions.cpufeatures]]
 version = "0.2.17"
@@ -484,8 +491,9 @@ version = "0.2.4"
 criteria = "safe-to-deploy"
 
 [[exemptions.fpe]]
-version = "0.6.1"
+version = "0.7.0"
 criteria = "safe-to-deploy"
+notes = "AES/FF1 backend migration; pending dependency review."
 
 [[exemptions.freetype-sys]]
 version = "0.20.1"
@@ -722,6 +730,11 @@ criteria = "safe-to-deploy"
 [[exemptions.num-bigint]]
 version = "0.4.8"
 criteria = "safe-to-deploy"
+
+[[exemptions.num-bigint]]
+version = "0.5.1"
+criteria = "safe-to-deploy"
+notes = "AES/FF1 backend migration; pending dependency review."
 
 [[exemptions.num-complex]]
 version = "0.4.6"

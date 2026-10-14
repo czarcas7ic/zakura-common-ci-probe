@@ -38,7 +38,7 @@ pasta_curves = { workspace = true, features = ["default", "aarch64-asm"] }
 
 [dev-dependencies]
 assert_matches = "1.5"
-criterion = "0.3"
+criterion = "0.5"
 gumdrop = "0.8"
 image = ">=0.24, <0.24.5"
 proptest = "1"

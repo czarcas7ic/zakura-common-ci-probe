@@ -357,7 +357,7 @@ pub mod test_vectors;
 
 #[cfg(all(test, feature = "transparent-key-encoding"))]
 mod tests {
-    use rand::{Rng, SeedableRng as _};
+    use rand::{Rng, RngExt as _, SeedableRng as _};
     use rand_chacha::ChaChaRng;
     use secp256k1::SecretKey;
     use secrecy::SecretString;
@@ -387,7 +387,7 @@ mod tests {
         let mut rng = ChaChaRng::from_seed([0u8; 32]);
         for _ in 0..100 {
             let secret = random_secret_key(&mut rng);
-            let compressed = rng.gen_bool(0.5);
+            let compressed = rng.random_bool(0.5);
             let key = Key { secret, compressed };
 
             let encoded = key.der_encode();

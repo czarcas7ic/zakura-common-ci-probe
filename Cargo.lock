@@ -3587,7 +3587,7 @@ dependencies = [
  "equihash",
  "hex",
  "libc",
- "rand 0.8.7",
+ "rand 0.10.2",
 ]
 
 [[package]]
@@ -3678,8 +3678,8 @@ dependencies = [
  "hex",
  "nonempty",
  "proptest",
- "rand 0.8.7",
- "rand_chacha 0.3.1",
+ "rand 0.10.2",
+ "rand_chacha 0.10.0",
  "regex",
  "secp256k1",
  "secrecy",

@@ -187,7 +187,42 @@ mod tests {
     use zcash_protocol::consensus::{NetworkConstants, NetworkType};
     use zip32::AccountId;
 
-    use super::{PathParseError, ZcashdHdDerivation};
+    use super::{PathParseError, ZcashdHdDerivation, derive_mnemonic};
+
+    #[test]
+    fn derive_mnemonic_bip39_vectors() {
+        use secrecy::SecretVec;
+
+        // 256-bit entropy vectors from the reference BIP 39 English test set.
+        let vectors: [([u8; 32], &str, &str); 3] = [
+            (
+                [0x00; 32],
+                "abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon art",
+                "bda85446c68413707090a52022edd26a1c9462295029f2e60cd7c4f2bbd3097170af7a4d73245cafa9c3cca8d561a7c3de6f5d4a10be8ed2a5e608d68f92fcc8",
+            ),
+            (
+                [0x80; 32],
+                "letter advice cage absurd amount doctor acoustic avoid letter advice cage absurd amount doctor acoustic avoid letter advice cage absurd amount doctor acoustic bless",
+                "c0c519bd0e91a2ed54357d9d1ebef6f5af218a153624cf4f2da911a0ed8f7a09e2ef61af0aca007096df430022f7a2b6fb91661a9589097069720d015e4e982f",
+            ),
+            (
+                [0xff; 32],
+                "zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo zoo vote",
+                "dd48c104698c30cfe2b6142103248622fb7bb0ff692eebb00089b32d22484e1613912f0a5b694407be899ffd31ed3992c456cdf60f5d4564b8ba3f05a69890ad",
+            ),
+        ];
+
+        for (entropy, phrase, seed) in vectors {
+            let mnemonic = derive_mnemonic(&SecretVec::new(entropy.to_vec())).unwrap();
+            assert_eq!(mnemonic.phrase(), phrase);
+            assert_eq!(mnemonic.entropy(), &entropy[..]);
+            assert_eq!(hex::encode(mnemonic.to_seed("TREZOR")), seed);
+        }
+
+        // Only 32-byte legacy seeds are accepted.
+        assert!(derive_mnemonic(&SecretVec::new(vec![0; 16])).is_none());
+        assert!(derive_mnemonic(&SecretVec::new(vec![0; 33])).is_none());
+    }
 
     #[test]
     fn parse_zcashd_hd_path() {

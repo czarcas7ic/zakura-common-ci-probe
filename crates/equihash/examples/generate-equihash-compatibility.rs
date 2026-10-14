@@ -4,7 +4,7 @@
 //! generate-equihash-compatibility --features solver --locked` and store stdout
 //! in `src/test_vectors/random.txt`.
 
-use rand::{RngCore, SeedableRng, rngs::StdRng};
+use rand::{Rng, SeedableRng, rngs::StdRng};
 
 const HEADER_BYTES: usize = 108;
 const NONCE_BYTES: usize = 32;
@@ -112,6 +112,9 @@ fn emit(params: (u32, u32), input: &[u8], nonce: &[u8], proof: &[u8], valid: boo
 
 fn main() {
     let mut rng = StdRng::seed_from_u64(SEED);
+    // The committed fixture was first generated with rand 0.8. Rand 0.10's
+    // `StdRng` expands the seed and produces the same stream, so this header
+    // and every vector it precedes still regenerate byte for byte.
     println!("# Seed: {SEED:#x}; rand 0.8 StdRng; 8 Mainnet and 32 Regtest inputs.");
     println!("# Regenerate with the generate-equihash-compatibility example.");
     println!("# n k verdict header-prefix-hex nonce-hex solution-hex");

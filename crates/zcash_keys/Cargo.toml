@@ -20,7 +20,7 @@ name = "zcash_keys"
 
 [dependencies]
 bech32 = { version = "0.11", features = ["alloc"], default-features = false }
-bip0039 = { version = "0.12", optional = true }
+bip0039 = { version = "0.12", features = ["std"], optional = true, default-features = false }
 bip32 = { version = "0.6", features = ["alloc"], optional = true, default-features = false }
 bs58 = { version = "0.5", features = ["alloc", "check"], default-features = false }
 byteorder = { version = "1", optional = true }

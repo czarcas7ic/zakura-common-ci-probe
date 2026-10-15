@@ -1625,6 +1625,11 @@ jobs:
     env:
       PROPTEST_CASES: "32"
       RUST_BACKTRACE: "1"
+      # Unoptimized arithmetic made each debug-assertion run take minutes.
+      # Optimize only Udon there. The test profile keeps debug assertions and
+      # overflow checks on. The forced-assembly run below stays unoptimized,
+      # so inline assembly and stack use are still checked at opt-level 0.
+      UDON_DEBUG_CONFIG: profile.test.package.zakura-udon.opt-level=1
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -1656,13 +1661,13 @@ jobs:
           FEATURES: ${{ matrix.native_features }}
         run: |
           read -r -a features <<< "$FEATURES"
-          cargo test --locked -p zakura-udon --lib "${features[@]}"
+          cargo test --locked --config "$UDON_DEBUG_CONFIG" -p zakura-udon --lib "${features[@]}"
       - name: Check Udon with debug assertions with traits
         env:
           FEATURES: ${{ matrix.trait_features }}
         run: |
           read -r -a features <<< "$FEATURES"
-          cargo test --locked -p zakura-udon --lib "${features[@]}"
+          cargo test --locked --config "$UDON_DEBUG_CONFIG" -p zakura-udon --lib "${features[@]}"
       # `--all-features` enables `portable`, so the x86-64 assembly needs its
       # own runs: forced by the feature, then selected from target features.
       # A runner without ADX/BMI2 only compiles the assembly tests.

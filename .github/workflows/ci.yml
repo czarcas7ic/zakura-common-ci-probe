@@ -51,6 +51,8 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - name: Test Udon manifest scoping
+        run: python3 .github/scripts/test_udon_inputs_changed.py
       - name: Match changed paths to upstream repositories
         id: filter
         shell: bash
@@ -104,6 +106,7 @@ jobs:
           librustzcash=false
           udon=false
           shared=false
+          manifests=false
 
           # Trip on workspace membership drift so maintainers revisit this
           # array, the path-routing cases, and the reverse-dependency graph
@@ -152,7 +155,7 @@ jobs:
 
           while IFS= read -r path; do
             case "$path" in
-              crates/bento/*|crates/bento-core/*|crates/bento-macros/*|crates/udon/*|.github/scripts/check_udon_fixtures.py)
+              crates/bento/*|crates/bento-core/*|crates/bento-macros/*|crates/udon/*|.github/scripts/check_udon_fixtures.py|.github/scripts/*udon_inputs_changed.py)
                 udon=true
                 ;;
               crates/equihash/*)
@@ -199,8 +202,13 @@ jobs:
               crates/zcash_address/*|crates/zcash_keys/*|crates/zcash_primitives/*|crates/zcash_protocol/*|crates/zcash_proofs/*|crates/zcash_transparent/*|crates/zip321/*)
                 librustzcash=true
                 ;;
-              Cargo.toml|Cargo.lock|rust-toolchain.toml|.cargo/*|.github/scripts/check_rust_group.sh|.github/scripts/workspace_packages.py|.github/workflows/ci.yml|.github/workflows/maintenance.yml)
+              Cargo.toml|Cargo.lock)
                 shared=true
+                manifests=true
+                ;;
+              rust-toolchain.toml|.cargo/*|.github/scripts/check_rust_group.sh|.github/scripts/workspace_packages.py|.github/workflows/ci.yml|.github/workflows/maintenance.yml)
+                shared=true
+                udon=true
                 ;;
             esac
           done <<< "$changed"
@@ -216,7 +224,23 @@ jobs:
             sapling_crypto=true
             sinsemilla=true
             librustzcash=true
-            udon=true
+          fi
+          # Udon and Bento use little of the root manifest and lockfile, so
+          # run their suite only when that part changed.
+          if [[ "$manifests" == true && "$udon" == false ]]; then
+            scope_base=$base_sha
+            scope_head=$head_sha
+            if [[ "$EVENT_NAME" == pull_request ]]; then
+              # CI tests the PR merged into its base branch, which can bring
+              # base-branch changes that interact with the PR's own diff.
+              scope_base="$GITHUB_SHA^1"
+              scope_head=$GITHUB_SHA
+            fi
+            if ! udon=$(python3 .github/scripts/udon_inputs_changed.py "$scope_base" "$scope_head") ||
+              [[ "$udon" != true && "$udon" != false ]]; then
+              echo "::warning::Could not scope the manifest change to Udon; running its suite"
+              udon=true
+            fi
           fi
 
           # Expand changed packages through the workspace's reverse-dependency
